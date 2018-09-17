@@ -1,0 +1,2 @@
+measure.json filter=lfs diff=lfs merge=lfs -text
+sensors.json filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block pagetitle %}
+    403 room control panel
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="row my-3">
+            <div class="col text-center">
+                <h1>Room 403 control panel</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="LinePRES"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="LineHUM"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="LineCO2"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="LineTC"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://momentjs.com/downloads/moment.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js" type="text/javascript"></script>
+<script>
+    var csrftoken = getCookie('csrftoken')
+
+    $(document).ready(function(){
+
+        function newDate(days) {
+            return moment().add(days, 'd').toDate();
+        }
+
+        function newDateString(days) {
+            return moment().add(days, 'd').format();
+        }
+
+        function getCFG(label, text, data) {
+            var config = {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: label,
+                        backgroundColor: "#61bfff",
+                        borderColor: "#a0ff78",
+                        fill: false,
+                        data: data,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: text
+                    },
+                    scales: {
+                        xAxes: [{
+                            type: 'time',
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Date'
+                            },
+                            ticks: {
+                                major: {
+                                    fontStyle: 'bold',
+                                    fontColor: '#FF0000'
+                                }
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'value'
+                            }
+                        }]
+                    }
+                }
+            };
+            return config
+        }
+
+        function drawLine(config, idram, data) {
+            var ctx = document.getElementById(idram).getContext('2d');
+            return new Chart(ctx, config)
+        }
+
+        function updateGraph(conf, line, sensor) {
+            $.getJSON('api/measures/get_measure_by_name/?sensor='+sensor, function(data){
+                var items = [];
+                $.each(data, function(index, element) {
+                    items.push({
+                        x:element.timestamp,
+                        y:element.value
+                    })
+                });
+
+                conf.data.datasets[0].data = items;
+                line.update()
+             });
+        }
+
+        var confPRES = getCFG("Pressure", "Pressure, Pa", []);
+        var linePRES = drawLine(confPRES, "LinePRES");
+        updateGraph(confPRES, linePRES, "PRES");
+
+        var confHUM = getCFG("Humidity", "Humidity, %", []);
+        var lineHUM = drawLine(confHUM, "LineHUM");
+        updateGraph(confHUM, lineHUM, "HUM");
+
+        var confCO2 = getCFG("CO2", "CO2, ppm", []);
+        var lineCO2 = drawLine(confCO2, "LineCO2");
+        updateGraph(confCO2, lineCO2, "CO2");
+
+        var confTC = getCFG("Temperature", "Temperature, Celcius degree", []);
+        var lineTC = drawLine(confTC, "LineTC");
+        updateGraph(confTC, lineTC, "TC");
+
+        function updateAll() {
+            updateGraph(confPRES, linePRES, "PRES");
+            updateGraph(confHUM, lineHUM, "HUM");
+            updateGraph(confCO2, lineCO2, "CO2");
+            updateGraph(confTC, lineTC, "TC");
+        }
+
+        setInterval(updateAll, 10000);
+
+    });
+</script>
+{% endblock %}
