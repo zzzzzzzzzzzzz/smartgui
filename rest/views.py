@@ -27,7 +27,7 @@ class MeasureViewSet(mixins.CreateModelMixin,
         timestamp_from = now - timedelta(hours=1)
         timestamp_to = now
         # временно, так как база устаревшая
-        d = timedelta(days=5)
+        d = timedelta(days=10)
         timestamp_from -= d
         timestamp_to -= d
         return Measure.objects.filter(

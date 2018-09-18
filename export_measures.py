@@ -40,7 +40,7 @@ if __name__ == '__main__':
     c = db.cursor()
     max_price = 5
     c.execute("""
-                select sensor, value, timestamp from poligonsignals order by timestamp ASC
+                select sensor, value, timestamp from poligonsignals where timestamp > '2018-09-01' order by timestamp ASC
               """)
     res = []
     i = 1
@@ -60,5 +60,5 @@ if __name__ == '__main__':
             except Exception:
                 pass
 
-    with open('fixtures/measure.json', 'w') as f:
+    with open('fixtures/measures_tail.json', 'w') as f:
         json.dump(res, f)
