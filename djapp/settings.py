@@ -28,7 +28,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '89.223.95.235'
+    '89.223.95.235',
+    'smartgui'
 ]
 
 
