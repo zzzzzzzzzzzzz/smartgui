@@ -12,6 +12,40 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-md-3 py-1 text-center">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Pressure</h3>
+                        <span class="h1" id="textPRES"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 py-1 text-center">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Humidity</h3>
+                        <span class="h1" id="textHUM"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 py-1 text-center">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>CO2</h3>
+                        <span class="h1" id="textCO2"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 py-1 text-center">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Temperature</h3>
+                        <span class="h1" id="textTC"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-6 py-1">
                 <div class="card">
                     <div class="card-body">
@@ -124,6 +158,7 @@
                     })
                 });
 
+                $('#text'+sensor).text(items[items.length - 1]['y']);
                 conf.data.datasets[0].data = items;
                 line.update()
              });
