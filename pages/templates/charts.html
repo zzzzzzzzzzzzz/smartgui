@@ -12,48 +12,56 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-3 py-1 text-center">
+            <div class="col py-1 text-center">
                 <div class="card">
                     <div class="card-body">
-                        <h3>Pressure</h3>
-                        <span class="h1" id="textPRES"></span>
+                        <h4>Pressure</h4>
+                        <span class="h2" id="textPRES"></span>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 py-1 text-center">
+            <div class="col py-1 text-center">
                 <div class="card">
                     <div class="card-body">
-                        <h3>Humidity</h3>
-                        <span class="h1" id="textHUM"></span>
+                        <h4>Humidity</h4>
+                        <span class="h2" id="textHUM"></span>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 py-1 text-center">
+            <div class="col py-1 text-center">
                 <div class="card">
                     <div class="card-body">
-                        <h3>CO2</h3>
-                        <span class="h1" id="textCO2"></span>
+                        <h4>CO2</h4>
+                        <span class="h2" id="textCO2"></span>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 py-1 text-center">
+            <div class="col py-1 text-center">
                 <div class="card">
                     <div class="card-body">
-                        <h3>Temperature</h3>
-                        <span class="h1" id="textTC"></span>
+                        <h4>Temperature</h4>
+                        <span class="h2" id="textTC"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col py-1 text-center">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Battery</h4>
+                        <span class="h2" id="textBAT"></span>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6 py-1">
+            <div class="col py-1">
                 <div class="card">
                     <div class="card-body">
-                        <canvas id="LinePRES"></canvas>
+                        <canvas id="LineTC"></canvas>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 py-1">
+            <div class="col py-1">
                 <div class="card">
                     <div class="card-body">
                         <canvas id="LineHUM"></canvas>
@@ -62,17 +70,28 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6 py-1">
+            <div class="col py-1">
                 <div class="card">
                     <div class="card-body">
                         <canvas id="LineCO2"></canvas>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 py-1">
+        </div>
+        <div class="row">
+            <div class="col py-1">
                 <div class="card">
                     <div class="card-body">
-                        <canvas id="LineTC"></canvas>
+                        <canvas id="LinePRES"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="LineBAT"></canvas>
                     </div>
                 </div>
             </div>
@@ -158,7 +177,7 @@
                     })
                 });
 
-                $('#text'+sensor).text(items[items.length - 1]['y']);
+                $('#text'+sensor).text(items[items.length - 1]['y'].toFixed(2));
                 conf.data.datasets[0].data = items;
                 line.update()
              });
@@ -180,11 +199,16 @@
         var lineTC = drawLine(confTC, "LineTC");
         updateGraph(confTC, lineTC, "TC");
 
+        var confBAT = getCFG("Battery", "State of the batteries, sensornodes, %", []);
+        var lineBAT = drawLine(confBAT, "LineBAT");
+        updateGraph(confBAT, lineBAT, "BAT");
+
         function updateAll() {
             updateGraph(confPRES, linePRES, "PRES");
             updateGraph(confHUM, lineHUM, "HUM");
             updateGraph(confCO2, lineCO2, "CO2");
             updateGraph(confTC, lineTC, "TC");
+            updateGraph(confBAT, lineBAT, "BAT");
         }
 
         setInterval(updateAll, 10000);
