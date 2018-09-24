@@ -38,7 +38,7 @@ import json
 if __name__ == '__main__':
     db = MySQLdb.connect(user='smart',passwd="password", db="raw_smart")
     c = db.cursor()
-    max_price = 5
+
     c.execute("""
                 select sensor, value, timestamp from poligonsignals where timestamp > '2018-09-01' order by timestamp ASC
               """)

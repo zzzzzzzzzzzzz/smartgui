@@ -15,6 +15,7 @@ class Sensor(models.Model):
         blank=False,
         null=False,
         max_length=255,
+        unique=True,
     )
 
     description = models.TextField(

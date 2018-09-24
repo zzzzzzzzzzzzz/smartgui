@@ -136,3 +136,10 @@ STATICFILES_DIRS = [
 FIXTURE_DIRS = (
    'fixtures/',
 )
+
+# You can create and use local_settings file to override global settings
+try:
+    from local_settings import *
+except ImportError as e:
+    print("Can't find local_settings.py file for config: {}", e)
+    pass
