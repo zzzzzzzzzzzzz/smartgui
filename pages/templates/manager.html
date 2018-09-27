@@ -175,13 +175,13 @@
                 if (ylabel==='number_kw_on_h') {
                     var kwhDom=$('#textKWH');
                     current_val = parseFloat(kwhDom.text());
-                    current_val += items[items.length - 2]['y'];
+                    current_val += items[items.length - 1]['y'];
                     kwhDom.text(current_val.toFixed(2));
                 }
                 if (ylabel==='amount_of_money') {
                     var rublesDom=$('#textRUBLES');
                     current_val = parseFloat(rublesDom.text());
-                    current_val += items[items.length - 2]['y'];
+                    current_val += items[items.length - 1]['y'];
                     rublesDom.text(current_val.toFixed(2));
                 }
                 //$('#text'+sensor).text(items[items.length - 1]['y'].toFixed(2));

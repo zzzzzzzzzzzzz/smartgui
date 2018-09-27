@@ -40,7 +40,7 @@ if __name__ == '__main__':
     c = db.cursor()
 
     c.execute("""
-                select sensor, value, timestamp from poligonsignals where timestamp >= '2018-03-01' order by timestamp ASC
+                select sensor, value, timestamp from poligonsignals where timestamp >= '2018-08-01' order by timestamp ASC
               """)
     res = []
     i = 1
@@ -71,5 +71,5 @@ if __name__ == '__main__':
             except Exception:
                 pass
 
-    with open('fixtures/measures_tail_summer_spring.json', 'w') as f:
+    with open('fixtures/measures_tail.json', 'w') as f:
         json.dump(res, f)
