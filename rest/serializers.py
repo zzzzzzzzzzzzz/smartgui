@@ -1,7 +1,7 @@
 # coding=utf-8
 from rest_framework import serializers
 
-from rest.models import Measure, Sensor
+from rest.models import Measure, Sensor, Room
 
 
 class MeasureSerializer(serializers.ModelSerializer):
@@ -15,4 +15,10 @@ class MeasureSerializer(serializers.ModelSerializer):
 class SensorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sensor
+        fields = ('pk', 'name', 'description')
+
+
+class RoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
         fields = ('pk', 'name', 'description')

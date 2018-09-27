@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block pagetitle %}
+    Building manager centre
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="row">
+            <div class="col text-center">
+                <h1>Building manager centre</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <h2>This month summary</h2>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col py-1 text-center">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Total power, kwh</h4>
+                        <span class="h2" id="textKWH">0.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col py-1 text-center">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Total bill, ₽</h4>
+                        <span class="h2" id="textRUBLES">0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col text-center">
+                <h2>Detailed view</h2>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="LineRAD1"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="LineRAD1_COST"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="LineRAD2"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="LineRAD2_COST"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="LineRAD3"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col py-1">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="LineRAD3_COST"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://momentjs.com/downloads/moment.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js" type="text/javascript"></script>
+<script>
+    var csrftoken = getCookie('csrftoken')
+
+    $(document).ready(function(){
+
+        function newDate(days) {
+            return moment().add(days, 'd').toDate();
+        }
+
+        function newDateString(days) {
+            return moment().add(days, 'd').format();
+        }
+
+        function getCFG(label, text, data) {
+            var config = {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: label,
+                        backgroundColor: "#61bfff",
+                        borderColor: "#a0ff78",
+                        fill: false,
+                        data: data,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: text
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Month'
+                            },
+                            ticks: {
+                                major: {
+                                    fontStyle: 'bold',
+                                    fontColor: '#FF0000'
+                                }
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'value'
+                            }
+                        }]
+                    }
+                }
+            };
+            return config
+        }
+
+        function drawLine(config, idram, data) {
+            var ctx = document.getElementById(idram).getContext('2d');
+            return new Chart(ctx, config)
+        }
+
+
+        function updateGraph(conf, line, xlabel, ylabel, sensor, room_name, chart_index) {
+            $.getJSON('/api/get_consumption/?consumer='+sensor+'&room_name='+room_name, function(data){
+                var items = [];
+                var labels =[];
+                $.each(data, function(index, element) {
+                    labels.push(element.month);
+                    items.push({
+                        x:element[xlabel],
+                        y:element[ylabel]
+                    })
+                });
+                conf.data.labels = labels;
+
+                if (ylabel==='number_kw_on_h') {
+                    var kwhDom=$('#textKWH');
+                    current_val = parseFloat(kwhDom.text());
+                    current_val += items[items.length - 2]['y'];
+                    kwhDom.text(current_val.toFixed(2));
+                }
+                if (ylabel==='amount_of_money') {
+                    var rublesDom=$('#textRUBLES');
+                    current_val = parseFloat(rublesDom.text());
+                    current_val += items[items.length - 2]['y'];
+                    rublesDom.text(current_val.toFixed(2));
+                }
+                //$('#text'+sensor).text(items[items.length - 1]['y'].toFixed(2));
+
+                conf.data.datasets[chart_index].data = items;
+                line.update()
+             });
+        }
+
+        $.getJSON('/api/rooms/', function(data){
+            var rooms = [];
+            $.each(data, function(index, element) {
+                rooms.push({
+                    id:element['id'],
+                    name:element['name'],
+                    description:element['description']
+                })
+            });
+
+            for (var idx in rooms) {
+
+                var confRAD1 = getCFG("Radiator 1. Room "+rooms[idx]['name'], "kwh", []);
+                var lineRAD1 = drawLine(confRAD1, "LineRAD1");
+                updateGraph(confRAD1, lineRAD1, 'month', 'number_kw_on_h', "RADIATOR_VAL1", rooms[idx]['name'], idx);
+                var confRAD1_COST = getCFG("Radiator 1 cost. Room "+rooms[idx]['name'], "Rubles", []);
+                var lineRAD1_COST = drawLine(confRAD1_COST, "LineRAD1_COST");
+                updateGraph(confRAD1_COST, lineRAD1_COST, 'month', 'amount_of_money', "RADIATOR_VAL1", rooms[idx]['name'], idx);
+
+                var confRAD2 = getCFG("Radiator 2. Room "+rooms[idx]['name'], "kwh", []);
+                var lineRAD2 = drawLine(confRAD2, "LineRAD2");
+                updateGraph(confRAD2, lineRAD2, 'month', 'number_kw_on_h', "RADIATOR_VAL2", rooms[idx]['name'], idx);
+                var confRAD2_COST = getCFG("Radiator 2 cost. Room "+rooms[idx]['name'], "Rubles", []);
+                var lineRAD2_COST = drawLine(confRAD2_COST, "LineRAD2_COST");
+                updateGraph(confRAD2_COST, lineRAD2_COST, 'month', 'amount_of_money', "RADIATOR_VAL2", rooms[idx]['name'], idx);
+
+                var confRAD3 = getCFG("Radiator 3. Room "+rooms[idx]['name'], "kwh", []);
+                var lineRAD3 = drawLine(confRAD3, "LineRAD3");
+                updateGraph(confRAD3, lineRAD3, 'month', 'number_kw_on_h', "RADIATOR_VAL3", rooms[idx]['name'], idx);
+                var confRAD3_COST = getCFG("Radiator 3 cost. Room "+rooms[idx]['name'], "Rubles", []);
+                var lineRAD3_COST = drawLine(confRAD3_COST, "LineRAD3_COST");
+                updateGraph(confRAD3_COST, lineRAD3_COST, 'month', 'amount_of_money', "RADIATOR_VAL3", rooms[idx]['name'], idx);
+
+                //function updateAll() {
+                //    updateGraph(confRAD1, lineRAD1, "RADIATOR_VAL1");
+                //    updateGraph(confRAD2, lineRAD2, "RADIATOR_VAL2");
+                //    updateGraph(confRAD3, lineRAD3, "RADIATOR_VAL3");
+                //}
+
+                //setInterval(updateAll, 10000);
+            }
+        });
+
+    });
+</script>
+{% endblock %}

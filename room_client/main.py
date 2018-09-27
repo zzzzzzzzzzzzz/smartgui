@@ -45,7 +45,8 @@ if __name__ == '__main__':
                         data = {
                             'sensor':name,
                             'value': val,
-                            'timestamp': elem[2]
+                            'timestamp': elem[2],
+                            'room_name': ROOM_NAME
                         }
                         params = json.dumps(data).encode('utf8')
                         req = request.Request(API_MEASURES, data=params,

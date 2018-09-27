@@ -4,19 +4,42 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+      <link rel="stylesheet" href="/static/css/base.css">
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
     <title>{% block pagetitle %} {% endblock %}</title>
 
   </head>
   <body>
 
-  <div class="container">
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="">eBuilding</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item {% if request.path == '/manager/' %}active{% endif %}">
+            <a class="nav-link" href="/manager/">Manager deck</a>
+          </li>
+          <li class="nav-item dropdown {% if '/rooms/' in request.path %}active{% endif %}">
+            <a class="nav-link dropdown-toggle " href="https://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Rooms</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+                {% for elem in rooms %}
+                <a class="dropdown-item {% if elem.name in request.path %}active{% endif %}" href="/rooms/{{ elem.name }}/">{{ elem.name }}</a>
+                {% endfor %}
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+  <main class="container" role="main">
         {% block content %}
         {% endblock %}
-  </div>
+  </main>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

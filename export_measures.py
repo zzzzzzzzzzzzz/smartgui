@@ -40,19 +40,30 @@ if __name__ == '__main__':
     c = db.cursor()
 
     c.execute("""
-                select sensor, value, timestamp from poligonsignals where timestamp > '2018-09-01' order by timestamp ASC
+                select sensor, value, timestamp from poligonsignals where timestamp >= '2018-03-01' order by timestamp ASC
               """)
     res = []
     i = 1
     for elem in c.fetchall():
-        if elem[0].upper() in SENSORS:
+        name = elem[0].upper()
+        if name in SENSORS:
             try:
+                val = elem[1]
+                if name == 'DOOR_STATE':
+                    if elem[1] == 'CLOSE':
+                        val = 0.0
+                    if elem[1] == 'OPEN':
+                        val = 1.0
+                if elem[1] == 'FALSE':
+                    val = 0.0
+                if elem[1] == 'TRUE':
+                    val = 1.0
                 res.append({
                     "model": "rest.measure",
                     "pk": i,
                     "fields": {
-                        "sensor": SENSORS[elem[0].upper()],
-                        "value": float(elem[1]),
+                        "sensor": SENSORS[name],
+                        "value": float(val),
                         "timestamp": str(elem[2]),
                     }
                 })
@@ -60,5 +71,5 @@ if __name__ == '__main__':
             except Exception:
                 pass
 
-    with open('fixtures/measures_tail.json', 'w') as f:
+    with open('fixtures/measures_tail_summer_spring.json', 'w') as f:
         json.dump(res, f)

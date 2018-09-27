@@ -1,15 +1,16 @@
 # coding=utf-8
 import os
 
+ROOM_NAME = '403'
 HOST = 'http://89.223.95.235/'
 API_ROOT = os.path.join(HOST, 'api/')
 API_MEASURES = os.path.join(API_ROOT, 'measures/insert_by_sensor_name/')
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# MYSQL_HOST = ''
-MYSQL_USER = 'user'
-MYSQL_PASSWORD = 'password'
-MYSQL_DATABASE = 'db'
+MYSQL_HOST = '192.168.15.36:3306'
+MYSQL_USER = 'root'
+MYSQL_PASSWORD = ''
+MYSQL_DATABASE = 'MeshliumDB'
 
 NEW_DATA_CHECK_TIMEDELTA = 30
 

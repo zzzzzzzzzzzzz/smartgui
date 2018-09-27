@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
 {% block pagetitle %}
-    403 room control panel
+    {{ room_name }} room control panel
 {% endblock %}
 
 {% block content %}
     <div class="content">
         <div class="row my-3">
             <div class="col text-center">
-                <h1>Room 403 control panel</h1>
+                <h1>Room {{ room_name }} control panel</h1>
             </div>
         </div>
         <div class="row">
@@ -168,7 +168,7 @@
         }
 
         function updateGraph(conf, line, sensor) {
-            $.getJSON('api/measures/get_measure_by_name/?sensor='+sensor, function(data){
+            $.getJSON('/api/measures/get_measure_by_name/?sensor='+sensor+'&room_name='+{{ room_name }}, function(data){
                 var items = [];
                 $.each(data, function(index, element) {
                     items.push({

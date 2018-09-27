@@ -16,11 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from pages.views import charts
+from pages.views import charts, manager
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'api-auth/', include('rest_framework.urls')),
     path(r'api/', include('rest.urls')),
-    path(r'', charts, name='charts'),
+    path(r'rooms/<str:room_name>/', charts, name='charts'),
+    path(r'manager/', manager, name='manager'),
 ]
